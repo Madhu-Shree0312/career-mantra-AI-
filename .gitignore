@@ -105,6 +105,3 @@ temp/
 *.njsproj
 *.sln
 *.sw?
-
-# Old cloned repository
-carrer-mantra/
