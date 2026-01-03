@@ -1,0 +1,35 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="100" r="95" stroke="#1e3a8a" stroke-width="2" fill="#1e40af"/>
+  
+  <!-- Flame -->
+  <path d="M100 55 C95 60, 95 65, 100 70 C105 65, 105 60, 100 55 Z" fill="white"/>
+  <path d="M100 60 C97 63, 97 66, 100 68 C103 66, 103 63, 100 60 Z" fill="#1e40af"/>
+  
+  <!-- Torch -->
+  <rect x="97" y="70" width="6" height="15" fill="white"/>
+  <rect x="95" y="82" width="10" height="3" fill="white"/>
+  
+  <!-- Open Book with Wings -->
+  <!-- Left wing -->
+  <path d="M50 95 Q60 85, 70 90 L75 95 Q65 100, 55 95 Z" fill="white"/>
+  <path d="M55 100 Q65 90, 75 95 L78 100 Q68 105, 58 100 Z" fill="white"/>
+  <path d="M60 105 Q70 95, 80 100 L82 105 Q72 110, 62 105 Z" fill="white"/>
+  
+  <!-- Right wing -->
+  <path d="M150 95 Q140 85, 130 90 L125 95 Q135 100, 145 95 Z" fill="white"/>
+  <path d="M145 100 Q135 90, 125 95 L122 100 Q132 105, 142 100 Z" fill="white"/>
+  <path d="M140 105 Q130 95, 120 100 L118 105 Q128 110, 138 105 Z" fill="white"/>
+  
+  <!-- Book -->
+  <path d="M85 90 L85 110 Q100 115, 115 110 L115 90 Q100 95, 85 90 Z" fill="white"/>
+  <line x1="100" y1="90" x2="100" y2="110" stroke="#1e40af" stroke-width="2"/>
+  
+  <!-- Stars -->
+  <circle cx="90" cy="120" r="2" fill="white"/>
+  <circle cx="100" cy="120" r="2" fill="white"/>
+  <circle cx="110" cy="120" r="2" fill="white"/>
+  
+  <!-- Text -->
+  <text x="100" y="150" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">CAREER</text>
+  <text x="100" y="170" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle">MANTRA</text>
+</svg>
