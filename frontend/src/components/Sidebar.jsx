@@ -1,4 +1,4 @@
-import { Plus, MessageSquare, Clock, Sparkles, Home, User, LogOut } from 'lucide-react';
+import { Plus, MessageSquare, Clock, Sparkles, Home, User, LogOut, Shield, Briefcase } from 'lucide-react';
 
 function Sidebar({ sessions, activeSession, onSelectSession, onNewSession, activeTab, user, onNavigate, onLogout }) {
   return (
@@ -37,6 +37,21 @@ function Sidebar({ sessions, activeSession, onSelectSession, onNewSession, activ
           <Home className="w-4 h-4" />
           <span className="font-medium text-sm">Dashboard</span>
         </button>
+
+        {/* Admin Panel - Only show for admin users */}
+        {user?.role === 'admin' && (
+          <button
+            onClick={() => onNavigate('admin')}
+            className={`w-full flex items-center gap-2 px-4 py-2 rounded-lg transition-all mb-2 ${
+              activeTab === 'admin' 
+                ? 'bg-purple-600/30 border border-purple-500/50 text-purple-200' 
+                : 'bg-white/10 hover:bg-white/20'
+            }`}
+          >
+            <Shield className="w-4 h-4" />
+            <span className="font-medium text-sm">Admin Panel</span>
+          </button>
+        )}
 
         {activeTab === 'chat' && (
           <button
@@ -100,6 +115,10 @@ function Sidebar({ sessions, activeSession, onSelectSession, onNewSession, activ
             <li className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 bg-pink-400 rounded-full"></div>
               <span>Career Roadmaps</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+              <span>Job Search</span>
             </li>
           </ul>
         </div>

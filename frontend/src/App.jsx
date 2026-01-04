@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import AdminPanel from './pages/AdminPanel';
+import RecruiterDashboard from './pages/RecruiterDashboard';
+import Jobs from './pages/Jobs';
 import ChatInterface from './components/ChatInterface';
 import ResumeAnalyzer from './components/ResumeAnalyzer';
 import RoadmapGenerator from './components/RoadmapGenerator';
@@ -117,6 +120,9 @@ function App() {
         )}
 
         {currentPage === 'dashboard' && <Dashboard onNavigate={navigateToTool} user={user} />}
+        {currentPage === 'admin' && <AdminPanel />}
+        {currentPage === 'recruiter' && <RecruiterDashboard />}
+        {currentPage === 'jobs' && <Jobs />}
         {currentPage === 'chat' && (
           <ChatInterface sessionId={activeSession} onFirstMessage={updateSessionTitle} />
         )}

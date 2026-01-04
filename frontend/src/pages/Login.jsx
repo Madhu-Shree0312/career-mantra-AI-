@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Loader2, Shield, User, Building2 } from 'lucide-react';
 import axios from 'axios';
 import API_BASE_URL from '../config/api';
 
 function Login({ onLogin }) {
-  const [isLogin, setIsLogin] = useState(true);
+  const [activeTab, setActiveTab] = useState('user'); // 'user', 'admin', 'signup', 'recruiter-signup'
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     name: '',
+    company: '',
     rememberMe: false
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -21,20 +22,45 @@ function Login({ onLogin }) {
     setIsLoading(true);
 
     try {
-      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-      const response = await axios.post(`${API_BASE_URL}${endpoint}`, {
+      const endpoint = (activeTab === 'signup' || activeTab === 'recruiter-signup') ? '/api/auth/register' : '/api/auth/login';
+      const requestData = {
         email: formData.email,
         password: formData.password,
         name: formData.name
-      });
+      };
 
-      if (response.data.token) {
+      // Add role and company for recruiter signup
+      if (activeTab === 'recruiter-signup') {
+        requestData.role = 'recruiter';
+        requestData.company = formData.company;
+      }
+
+      const response = await axios.post(`${API_BASE_URL}${endpoint}`, requestData);
+
+      if ((activeTab !== 'signup' && activeTab !== 'recruiter-signup') && response.data.token) {
+        // Login: Store token and redirect to dashboard
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
         if (formData.rememberMe) {
           localStorage.setItem('rememberMe', 'true');
         }
+        
+        // Check if admin login and user is actually admin
+        if (activeTab === 'admin' && response.data.user.role !== 'admin') {
+          setError('Access denied. Admin privileges required.');
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          return;
+        }
+        
         onLogin(response.data.user);
+      } else if ((activeTab === 'signup' || activeTab === 'recruiter-signup') && response.data.message) {
+        // Signup: Show success message and switch to user login
+        setError('');
+        setActiveTab('user');
+        setFormData({ email: formData.email, password: '', name: '', company: '', rememberMe: false });
+        // Show success message
+        alert(`${activeTab === 'recruiter-signup' ? 'Recruiter account' : 'Account'} created successfully! Please login with your credentials.`);
       }
     } catch (error) {
       console.error('Auth error:', error);
@@ -42,6 +68,12 @@ function Login({ onLogin }) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const switchTab = (tab) => {
+    setActiveTab(tab);
+    setError('');
+    setFormData({ email: '', password: '', name: '', company: '', rememberMe: false });
   };
 
   return (
@@ -67,31 +99,90 @@ function Login({ onLogin }) {
 
         {/* Login/Register Card */}
         <div className="bg-gradient-to-r from-blue-900/30 via-purple-900/20 to-indigo-900/10 backdrop-blur-lg rounded-2xl shadow-2xl p-6 border border-white/20">
-          <div className="flex gap-2 mb-4">
+          {/* Tab Navigation */}
+          <div className="grid grid-cols-2 gap-1 mb-4 bg-white/5 p-1 rounded-lg">
             <button
-              onClick={() => setIsLogin(true)}
-              className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all text-sm ${
-                isLogin
+              onClick={() => switchTab('user')}
+              className={`py-2 px-3 rounded-md font-medium transition-all text-xs flex items-center justify-center gap-2 ${
+                activeTab === 'user'
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg border border-blue-300/50'
                   : 'text-white/70 hover:text-white hover:bg-white/10'
               }`}
             >
-              Login
+              <User className="w-4 h-4" />
+              User Login
             </button>
             <button
-              onClick={() => setIsLogin(false)}
-              className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all text-sm ${
-                !isLogin
-                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg border border-blue-300/50'
+              onClick={() => switchTab('admin')}
+              className={`py-2 px-3 rounded-md font-medium transition-all text-xs flex items-center justify-center gap-2 ${
+                activeTab === 'admin'
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg border border-purple-300/50'
                   : 'text-white/70 hover:text-white hover:bg-white/10'
               }`}
             >
+              <Shield className="w-4 h-4" />
+              Admin
+            </button>
+            <button
+              onClick={() => switchTab('signup')}
+              className={`py-2 px-3 rounded-md font-medium transition-all text-xs flex items-center justify-center gap-2 ${
+                activeTab === 'signup'
+                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg border border-green-300/50'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <User className="w-4 h-4" />
               Sign Up
+            </button>
+            <button
+              onClick={() => switchTab('recruiter-signup')}
+              className={`py-2 px-3 rounded-md font-medium transition-all text-xs flex items-center justify-center gap-2 ${
+                activeTab === 'recruiter-signup'
+                  ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg border border-orange-300/50'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Building2 className="w-4 h-4" />
+              Recruiter
             </button>
           </div>
 
+          {/* Tab Content Headers */}
+          <div className="mb-4 text-center">
+            {activeTab === 'user' && (
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-1">Student Login</h3>
+                <p className="text-xs text-blue-200">Access your career guidance dashboard</p>
+              </div>
+            )}
+            {activeTab === 'admin' && (
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-1 flex items-center justify-center gap-2">
+                  <Shield className="w-5 h-5 text-purple-400" />
+                  Admin Access
+                </h3>
+                <p className="text-xs text-purple-200">Administrative panel login</p>
+              </div>
+            )}
+            {activeTab === 'signup' && (
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-1">Create Student Account</h3>
+                <p className="text-xs text-green-200">Join Career Mantra AI as a student</p>
+              </div>
+            )}
+            {activeTab === 'recruiter-signup' && (
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-1 flex items-center justify-center gap-2">
+                  <Building2 className="w-5 h-5 text-orange-400" />
+                  Recruiter Registration
+                </h3>
+                <p className="text-xs text-orange-200">Post jobs and find talented candidates</p>
+              </div>
+            )}
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-3">
-            {!isLogin && (
+            {(activeTab === 'signup' || activeTab === 'recruiter-signup') && (
               <div>
                 <label className="block text-white/90 text-xs font-medium mb-1.5">
                   Full Name
@@ -100,16 +191,40 @@ function Login({ onLogin }) {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white text-sm placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  placeholder="Enter your name"
-                  required={!isLogin}
+                  className={`w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white text-sm placeholder-white/50 focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
+                    activeTab === 'recruiter-signup' ? 'focus:ring-orange-500' : 'focus:ring-green-500'
+                  }`}
+                  placeholder="Enter your full name"
+                  required={activeTab === 'signup' || activeTab === 'recruiter-signup'}
                 />
+              </div>
+            )}
+
+            {activeTab === 'recruiter-signup' && (
+              <div>
+                <label className="block text-white/90 text-xs font-medium mb-1.5">
+                  Company Name
+                </label>
+                <div className="relative">
+                  <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/50" />
+                  <input
+                    type="text"
+                    value={formData.company}
+                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                    className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white text-sm placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                    placeholder="Your company name"
+                    required={activeTab === 'recruiter-signup'}
+                  />
+                </div>
               </div>
             )}
 
             <div>
               <label className="block text-white/90 text-xs font-medium mb-1.5">
                 Email Address
+                {activeTab === 'admin' && (
+                  <span className="text-purple-300 ml-1">(Admin credentials required)</span>
+                )}
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/50" />
@@ -117,8 +232,22 @@ function Login({ onLogin }) {
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white text-sm placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  placeholder="your.email@example.com"
+                  className={`w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white text-sm placeholder-white/50 focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
+                    activeTab === 'admin' 
+                      ? 'focus:ring-purple-500' 
+                      : activeTab === 'signup' 
+                        ? 'focus:ring-green-500'
+                        : activeTab === 'recruiter-signup'
+                          ? 'focus:ring-orange-500'
+                        : 'focus:ring-blue-500'
+                  }`}
+                  placeholder={
+                    activeTab === 'admin' 
+                      ? 'admin@careermentra.com' 
+                      : activeTab === 'recruiter-signup'
+                        ? 'recruiter@company.com'
+                        : 'your.email@example.com'
+                  }
                   required
                 />
               </div>
@@ -134,7 +263,15 @@ function Login({ onLogin }) {
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full pl-10 pr-10 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white text-sm placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  className={`w-full pl-10 pr-10 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white text-sm placeholder-white/50 focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
+                    activeTab === 'admin' 
+                      ? 'focus:ring-purple-500' 
+                      : activeTab === 'signup' 
+                        ? 'focus:ring-green-500'
+                        : activeTab === 'recruiter-signup'
+                          ? 'focus:ring-orange-500'
+                        : 'focus:ring-blue-500'
+                  }`}
                   placeholder="Enter your password"
                   required
                 />
@@ -148,18 +285,50 @@ function Login({ onLogin }) {
               </div>
             </div>
 
-            {isLogin && (
+            {(activeTab !== 'signup' && activeTab !== 'recruiter-signup') && (
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="rememberMe"
                   checked={formData.rememberMe}
                   onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
-                  className="w-4 h-4 rounded border-white/20 bg-white/10 text-purple-600 focus:ring-purple-500"
+                  className={`w-4 h-4 rounded border-white/20 bg-white/10 focus:ring-2 ${
+                    activeTab === 'admin' 
+                      ? 'text-purple-600 focus:ring-purple-500' 
+                      : 'text-blue-600 focus:ring-blue-500'
+                  }`}
                 />
                 <label htmlFor="rememberMe" className="ml-2 text-white/80 text-sm">
                   Remember me
                 </label>
+              </div>
+            )}
+
+            {/* Recruiter Signup Helper */}
+            {activeTab === 'recruiter-signup' && (
+              <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-3 text-xs">
+                <div className="flex items-center gap-2 text-orange-200 mb-1">
+                  <Building2 className="w-3 h-3" />
+                  <span className="font-medium">Recruiter Account</span>
+                </div>
+                <p className="text-orange-300/80">
+                  Create a recruiter account to post jobs and manage applications. 
+                  You'll get access to a dedicated recruiter dashboard.
+                </p>
+              </div>
+            )}
+
+            {/* Admin Login Helper */}
+            {activeTab === 'admin' && (
+              <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-3 text-xs">
+                <div className="flex items-center gap-2 text-purple-200 mb-1">
+                  <Shield className="w-3 h-3" />
+                  <span className="font-medium">Admin Access</span>
+                </div>
+                <p className="text-purple-300/80">
+                  Use admin credentials to access the administrative panel. 
+                  Only accounts with admin privileges can login here.
+                </p>
               </div>
             )}
 
@@ -172,27 +341,103 @@ function Login({ onLogin }) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium text-sm hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2 border border-blue-300/50"
+              className={`w-full py-2.5 text-white rounded-lg font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2 border ${
+                activeTab === 'admin'
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 border-purple-300/50 focus:ring-purple-300'
+                  : activeTab === 'signup'
+                    ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 border-green-300/50 focus:ring-green-300'
+                    : activeTab === 'recruiter-signup'
+                      ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 border-orange-300/50 focus:ring-orange-300'
+                      : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border-blue-300/50 focus:ring-blue-300'
+              }`}
             >
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  {isLogin ? 'Logging in...' : 'Creating account...'}
+                  {activeTab === 'admin' ? 'Authenticating...' : 
+                   activeTab === 'signup' ? 'Creating account...' : 
+                   activeTab === 'recruiter-signup' ? 'Creating recruiter account...' : 'Logging in...'}
                 </>
               ) : (
-                <>{isLogin ? 'Login' : 'Create Account'}</>
+                <>
+                  {activeTab === 'admin' && <Shield className="w-4 h-4" />}
+                  {activeTab === 'user' && <User className="w-4 h-4" />}
+                  {activeTab === 'recruiter-signup' && <Building2 className="w-4 h-4" />}
+                  {activeTab === 'admin' ? 'Admin Login' : 
+                   activeTab === 'signup' ? 'Create Account' : 
+                   activeTab === 'recruiter-signup' ? 'Create Recruiter Account' : 'Login'}
+                </>
               )}
             </button>
           </form>
 
+          {/* Footer Links */}
           <div className="mt-4 text-center text-white/60 text-xs">
-            {isLogin ? "Don't have an account? " : 'Already have an account? '}
-            <button
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-blue-300 hover:text-blue-200 font-medium transition-colors"
-            >
-              {isLogin ? 'Sign up' : 'Login'}
-            </button>
+            {activeTab === 'user' && (
+              <>
+                Don't have an account?{' '}
+                <button
+                  onClick={() => switchTab('signup')}
+                  className="text-green-300 hover:text-green-200 font-medium transition-colors"
+                >
+                  Sign up
+                </button>
+                {' or '}
+                <button
+                  onClick={() => switchTab('recruiter-signup')}
+                  className="text-orange-300 hover:text-orange-200 font-medium transition-colors"
+                >
+                  Join as Recruiter
+                </button>
+              </>
+            )}
+            {activeTab === 'admin' && (
+              <>
+                Need a user account?{' '}
+                <button
+                  onClick={() => switchTab('user')}
+                  className="text-blue-300 hover:text-blue-200 font-medium transition-colors"
+                >
+                  User Login
+                </button>
+              </>
+            )}
+            {activeTab === 'signup' && (
+              <>
+                Already have an account?{' '}
+                <button
+                  onClick={() => switchTab('user')}
+                  className="text-blue-300 hover:text-blue-200 font-medium transition-colors"
+                >
+                  Login
+                </button>
+                {' or '}
+                <button
+                  onClick={() => switchTab('recruiter-signup')}
+                  className="text-orange-300 hover:text-orange-200 font-medium transition-colors"
+                >
+                  Join as Recruiter
+                </button>
+              </>
+            )}
+            {activeTab === 'recruiter-signup' && (
+              <>
+                Already have an account?{' '}
+                <button
+                  onClick={() => switchTab('user')}
+                  className="text-blue-300 hover:text-blue-200 font-medium transition-colors"
+                >
+                  Login
+                </button>
+                {' or '}
+                <button
+                  onClick={() => switchTab('signup')}
+                  className="text-green-300 hover:text-green-200 font-medium transition-colors"
+                >
+                  Student Signup
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { MessageSquare, FileText, Map, Zap } from 'lucide-react';
+import { MessageSquare, FileText, Map, Zap, Shield, Briefcase } from 'lucide-react';
 
 function Dashboard({ onNavigate, user }) {
   const tools = [
@@ -28,8 +28,47 @@ function Dashboard({ onNavigate, user }) {
       gradient: 'from-orange-500 to-red-500',
       bgGradient: 'from-orange-500/20 to-red-500/20',
       features: ['Step-by-step plan', 'Skill mapping', 'Timeline estimates']
+    },
+    {
+      id: 'jobs',
+      title: 'Job Search & Listings',
+      description: 'Discover relevant job opportunities and get AI-powered application tips',
+      icon: Briefcase,
+      gradient: 'from-green-500 to-emerald-500',
+      bgGradient: 'from-green-500/20 to-emerald-500/20',
+      features: ['Job matching', 'Application tips', 'Salary insights']
     }
   ];
+
+  // Add admin panel tool for admin users
+  const adminTools = user?.role === 'admin' ? [
+    {
+      id: 'admin',
+      title: 'Admin Panel',
+      description: 'Manage users, view analytics, and control system settings',
+      icon: Shield,
+      gradient: 'from-purple-600 to-indigo-600',
+      bgGradient: 'from-purple-600/20 to-indigo-600/20',
+      features: ['User management', 'System analytics', 'Role controls'],
+      isAdmin: true
+    }
+  ] : [];
+
+  // Add recruiter dashboard for recruiters (demo - in production, you'd have a recruiter role)
+  const recruiterTools = user?.email?.includes('recruiter') || user?.role === 'recruiter' ? [
+    {
+      id: 'recruiter',
+      title: 'Recruiter Dashboard',
+      description: 'Post jobs, manage applications, and review candidate profiles',
+      icon: Briefcase,
+      gradient: 'from-indigo-600 to-purple-600',
+      bgGradient: 'from-indigo-600/20 to-purple-600/20',
+      features: ['Post jobs', 'Review applications', 'Download resumes'],
+      isRecruiter: true
+    }
+  ] : [];
+
+  const allTools = [...tools, ...adminTools, ...recruiterTools];
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_center,_#0a3a70_0%,_#081a30_50%,_#000000_100%)] text-white overflow-y-auto">
@@ -45,7 +84,15 @@ function Dashboard({ onNavigate, user }) {
           <div className="text-center mb-8 lg:mb-12">
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full mb-4 border border-white/20">
               <Zap className="w-4 h-4 text-yellow-400" />
-              <span className="text-white/90 text-xs lg:text-sm">Welcome back, {user?.name || 'Student'}!</span>
+              <span className="text-white/90 text-xs lg:text-sm">
+                Welcome back, {user?.name || 'Student'}!
+                {user?.role === 'admin' && (
+                  <span className="ml-2 inline-flex items-center gap-1 bg-purple-500/30 px-2 py-0.5 rounded-full text-xs border border-purple-400/50">
+                    <Shield className="w-3 h-3" />
+                    Admin
+                  </span>
+                )}
+              </span>
             </div>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3">
               Your AI Career Tools
@@ -57,19 +104,40 @@ function Dashboard({ onNavigate, user }) {
 
           {/* Tool Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 max-w-6xl mx-auto">
-            {tools.map((tool) => (
+            {allTools.map((tool) => (
               <button
                 key={tool.id}
                 onClick={() => onNavigate(tool.id)}
-                className="group relative bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 hover:border-white/40 transition-all duration-300 text-left overflow-hidden transform hover:-translate-y-1 hover:shadow-xl"
+                className={`group relative backdrop-blur-lg rounded-xl p-6 border transition-all duration-300 text-left overflow-hidden transform hover:-translate-y-1 hover:shadow-xl ${
+                  tool.isAdmin 
+                    ? 'bg-purple-500/10 border-purple-500/30 hover:border-purple-400/60' 
+                    : tool.isRecruiter
+                      ? 'bg-indigo-500/10 border-indigo-500/30 hover:border-indigo-400/60'
+                      : 'bg-white/10 border-white/20 hover:border-white/40'
+                }`}
               >
                 {/* Gradient background on hover */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${tool.bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
                 
                 <div className="relative z-10">
-                  {/* Icon */}
-                  <div className={`inline-flex p-3 rounded-lg bg-gradient-to-br ${tool.gradient} mb-4 transform group-hover:scale-110 transition-all duration-300 shadow-lg`}>
-                    <tool.icon className="w-6 h-6 text-white" />
+                  {/* Icon with admin badge */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`inline-flex p-3 rounded-lg bg-gradient-to-br ${tool.gradient} transform group-hover:scale-110 transition-all duration-300 shadow-lg`}>
+                      <tool.icon className="w-6 h-6 text-white" />
+                    </div>
+                    {(tool.isAdmin || tool.isRecruiter) && (
+                      <div className={`rounded-full px-2 py-1 border ${
+                        tool.isAdmin 
+                          ? 'bg-purple-500/20 border-purple-400/50' 
+                          : 'bg-indigo-500/20 border-indigo-400/50'
+                      }`}>
+                        <span className={`text-xs font-medium ${
+                          tool.isAdmin ? 'text-purple-200' : 'text-indigo-200'
+                        }`}>
+                          {tool.isAdmin ? 'Admin Only' : 'Recruiter'}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Title */}
@@ -94,7 +162,9 @@ function Dashboard({ onNavigate, user }) {
 
                   {/* Arrow indicator */}
                   <div className="flex items-center gap-2 text-white/50 group-hover:text-white group-hover:gap-3 transition-all">
-                    <span className="text-xs font-medium">Get Started</span>
+                    <span className="text-xs font-medium">
+                      {tool.isAdmin ? 'Access Panel' : tool.isRecruiter ? 'Access Dashboard' : 'Get Started'}
+                    </span>
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
