@@ -359,9 +359,9 @@ function ResumeAnalyzer() {
 
         {activeTab === 'builder' ? (
           /* Resume Builder */
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 overflow-hidden">
             {/* Builder Form */}
-            <div className="space-y-6">
+            <div className="space-y-6 overflow-y-auto max-h-screen pb-20">
               {/* Personal Information */}
               <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg border border-white/20 p-6">
                 <h3 className="text-lg font-bold text-white mb-4">Personal Information</h3>
@@ -451,7 +451,7 @@ function ResumeAnalyzer() {
                     Add Experience
                   </button>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-4 max-h-96 overflow-y-auto">
                   {resumeData.experience.map((exp, index) => (
                     <div key={exp.id} className="border border-white/20 rounded-lg p-4">
                       <div className="flex justify-between items-start mb-3">
@@ -459,41 +459,43 @@ function ResumeAnalyzer() {
                         {resumeData.experience.length > 1 && (
                           <button
                             onClick={() => removeExperience(exp.id)}
-                            className="text-red-400 hover:text-red-300 text-sm"
+                            className="text-red-400 hover:text-red-300 text-sm flex-shrink-0"
                           >
                             Remove
                           </button>
                         )}
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <input
-                          type="text"
-                          placeholder="Job Title"
-                          value={exp.jobTitle}
-                          onChange={(e) => updateExperience(exp.id, 'jobTitle', e.target.value)}
-                          className="px-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-sm"
-                        />
-                        <input
-                          type="text"
-                          placeholder="Company"
-                          value={exp.company}
-                          onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
-                          className="px-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-sm"
-                        />
+                      <div className="grid grid-cols-1 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <input
+                            type="text"
+                            placeholder="Job Title"
+                            value={exp.jobTitle}
+                            onChange={(e) => updateExperience(exp.id, 'jobTitle', e.target.value)}
+                            className="px-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-sm w-full"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Company"
+                            value={exp.company}
+                            onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
+                            className="px-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-sm w-full"
+                          />
+                        </div>
                         <input
                           type="text"
                           placeholder="Location"
                           value={exp.location}
                           onChange={(e) => updateExperience(exp.id, 'location', e.target.value)}
-                          className="px-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-sm"
+                          className="px-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-sm w-full"
                         />
-                        <div className="flex gap-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <input
                             type="month"
                             placeholder="Start Date"
                             value={exp.startDate}
                             onChange={(e) => updateExperience(exp.id, 'startDate', e.target.value)}
-                            className="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-sm"
+                            className="px-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-sm w-full"
                           />
                           <input
                             type="month"
@@ -501,7 +503,7 @@ function ResumeAnalyzer() {
                             value={exp.endDate}
                             onChange={(e) => updateExperience(exp.id, 'endDate', e.target.value)}
                             disabled={exp.current}
-                            className="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-sm disabled:opacity-50"
+                            className="px-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-sm disabled:opacity-50 w-full"
                           />
                         </div>
                         <div className="md:col-span-2">
@@ -538,7 +540,7 @@ function ResumeAnalyzer() {
                     Add Education
                   </button>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-4 max-h-80 overflow-y-auto">
                   {resumeData.education.map((edu, index) => (
                     <div key={edu.id} className="border border-white/20 rounded-lg p-4">
                       <div className="flex justify-between items-start mb-3">
@@ -637,7 +639,7 @@ function ResumeAnalyzer() {
                     Add Project
                   </button>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-4 max-h-80 overflow-y-auto">
                   {resumeData.projects.map((proj, index) => (
                     <div key={proj.id} className="border border-white/20 rounded-lg p-4">
                       <div className="flex justify-between items-start mb-3">
@@ -695,7 +697,7 @@ function ResumeAnalyzer() {
             </div>
 
             {/* Live Preview */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 h-fit sticky top-6">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 h-fit sticky top-6 max-h-screen overflow-hidden">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                   <Eye className="w-5 h-5" />
@@ -723,7 +725,7 @@ function ResumeAnalyzer() {
               </div>
               
               {/* Resume Template */}
-              <div className="bg-white border border-gray-300 rounded-lg p-8 max-h-96 overflow-y-auto shadow-inner" style={{ fontFamily: 'Georgia, serif' }}>
+              <div className="bg-white border border-gray-300 rounded-lg p-8 max-h-[calc(100vh-200px)] overflow-y-auto shadow-inner" style={{ fontFamily: 'Georgia, serif' }}>
                 {resumeData.personalInfo.fullName ? (
                   <div className="space-y-6">
                     {/* Header */}
@@ -982,23 +984,21 @@ function ResumeAnalyzer() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Detailed Analysis</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Career Mantra AI Analysis</h3>
                 <div className="prose prose-sm max-w-none">
-                  <p className="text-gray-700 whitespace-pre-wrap">{analysis.analysis}</p>
+                  <div 
+                    className="text-gray-700 whitespace-pre-wrap"
+                    dangerouslySetInnerHTML={{
+                      __html: analysis.analysis
+                        .replace(/### (.*)/g, '<h3 class="text-lg font-bold text-gray-900 mt-6 mb-3 flex items-center gap-2">$1</h3>')
+                        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
+                        .replace(/- (.*)/g, '<li class="ml-4 mb-2">$1</li>')
+                        .replace(/(\d+)\/100/g, '<span class="font-bold text-blue-600">$1/100</span>')
+                        .replace(/Overall Score.*?(\d+)/i, '<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4"><span class="text-lg font-bold text-blue-900">Overall Score: $1/100</span></div>')
+                    }}
+                  />
                 </div>
               </div>
-
-              {analysis.suggestions && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    Improvement Suggestions
-                  </h3>
-                  <div className="prose prose-sm max-w-none">
-                    <p className="text-gray-700 whitespace-pre-wrap">{analysis.suggestions}</p>
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="space-y-6">
@@ -1033,31 +1033,41 @@ function ResumeAnalyzer() {
                     </div>
                   </div>
                   <p className="text-center text-sm text-gray-600 mt-4">
-                    {analysis.score >= 80 ? 'Excellent!' : analysis.score >= 60 ? 'Good progress' : 'Needs improvement'}
+                    {analysis.score >= 80 ? 'Excellent Resume!' : 
+                     analysis.score >= 70 ? 'Good Resume' : 
+                     analysis.score >= 60 ? 'Needs Some Work' : 'Significant Improvements Needed'}
                   </p>
                 </div>
               )}
 
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Tips</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Action Items</h3>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-2 text-sm text-gray-700">
                     <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    Use action verbs and quantify achievements
+                    Review the improvement suggestions above
                   </li>
                   <li className="flex items-start gap-2 text-sm text-gray-700">
                     <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    Tailor resume to job description
+                    Implement ATS optimization tips
                   </li>
                   <li className="flex items-start gap-2 text-sm text-gray-700">
                     <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    Keep it concise (1-2 pages)
+                    Quantify your achievements with numbers
                   </li>
                   <li className="flex items-start gap-2 text-sm text-gray-700">
                     <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    Include relevant keywords
+                    Tailor resume for each job application
                   </li>
                 </ul>
+              </div>
+
+              <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-xl shadow-sm border border-green-200 p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">💡 Pro Tip</h3>
+                <p className="text-sm text-gray-700">
+                  Use the <strong>Resume Builder</strong> tab to create a professional resume template, 
+                  then come back here to analyze and optimize it further!
+                </p>
               </div>
             </div>
           </div>
