@@ -2,22 +2,34 @@
 
 ## 🏗️ Architecture Overview
 
-Career Mantra AI follows a modern client-server architecture with AI integration.
+Career Mantra AI follows a modern client-server architecture with AI integration, featuring a comprehensive role-based system with admin panel, job management, and recruiter dashboard.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                         USER INTERFACE                          │
 │                    (React 19 + Tailwind CSS)                    │
+│  ┌─────────────┬─────────────┬─────────────┬─────────────────┐  │
+│  │   Student   │    Admin    │  Recruiter  │   Job Seeker    │  │
+│  │  Dashboard  │    Panel    │  Dashboard  │   Interface     │  │
+│  └─────────────┴─────────────┴─────────────┴─────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
                               ↕ HTTP/HTTPS
 ┌─────────────────────────────────────────────────────────────────┐
 │                      BACKEND API SERVER                         │
 │                    (Node.js + Express.js)                       │
+│  ┌─────────────┬─────────────┬─────────────┬─────────────────┐  │
+│  │    Auth     │    Admin    │  Recruiter  │      Jobs       │  │
+│  │   Service   │   Service   │   Service   │    Service      │  │
+│  └─────────────┴─────────────┴─────────────┴─────────────────┘  │
+│  ┌─────────────┬─────────────┬─────────────┬─────────────────┐  │
+│  │    File     │    User     │    Chat     │      AI         │  │
+│  │   Upload    │ Management  │   History   │   Integration   │  │
+│  └─────────────┴─────────────┴─────────────┴─────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
                               ↕ API Calls
 ┌─────────────────────────────────────────────────────────────────┐
-│                      OPENAI API SERVICE                         │
-│                      (GPT-4o-mini Model)                        │
+│                      GOOGLE GEMINI API                          │
+│                      (Gemini 2.5 Flash)                         │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -31,23 +43,30 @@ Career Mantra AI follows a modern client-server architecture with AI integration
 frontend/
 ├── src/
 │   ├── pages/
-│   │   ├── Login.jsx           # Authentication page
-│   │   └── Dashboard.jsx       # Main dashboard with tool cards
+│   │   ├── Login.jsx              # Multi-tab authentication (User/Admin/Recruiter)
+│   │   ├── Dashboard.jsx          # Main dashboard with role-based tools
+│   │   ├── AdminPanel.jsx         # Admin user management interface
+│   │   ├── RecruiterDashboard.jsx # Job posting and application management
+│   │   └── Jobs.jsx               # Job listings and application system
 │   │
 │   ├── components/
-│   │   ├── Sidebar.jsx         # Navigation sidebar
-│   │   ├── ChatInterface.jsx   # AI Q&A chat component
-│   │   ├── ResumeAnalyzer.jsx  # Resume analysis tool
-│   │   └── RoadmapGenerator.jsx # Career roadmap tool
+│   │   ├── Sidebar.jsx            # Role-based navigation sidebar
+│   │   ├── ChatInterface.jsx      # AI Q&A chat component
+│   │   ├── ResumeAnalyzer.jsx     # Resume analysis tool
+│   │   ├── RoadmapGenerator.jsx   # Career roadmap tool
+│   │   └── JobApplicationForm.jsx # Job application with resume upload
 │   │
-│   ├── App.jsx                 # Main app component
-│   ├── main.jsx                # Entry point
-│   └── index.css               # Global styles
+│   ├── config/
+│   │   └── api.js                 # API configuration
+│   │
+│   ├── App.jsx                    # Main app with routing
+│   ├── main.jsx                   # Entry point
+│   └── index.css                  # Global styles
 │
 ├── public/
-│   └── logo.svg                # Career Mantra logo
+│   └── logo.svg                   # Career Mantra logo
 │
-└── package.json                # Dependencies
+└── package.json                   # Dependencies
 ```
 
 **Key Technologies:**
@@ -56,6 +75,8 @@ frontend/
 - Tailwind CSS (Styling)
 - Axios (HTTP client)
 - Lucide React (Icons)
+- Role-based access control
+- Multi-file upload support
 
 ---
 
@@ -63,8 +84,9 @@ frontend/
 
 ```
 backend/
-├── server.js                   # Main server file
-├── package.json                # Dependencies
+├── server.js                   # Main server file with all endpoints
+├── uploads/                    # Resume file storage directory
+├── package.json                # Dependencies (includes multer)
 ├── .env                        # Environment variables
 └── .env.example                # Example env file
 ```
@@ -72,10 +94,12 @@ backend/
 **Key Technologies:**
 - Node.js (Runtime)
 - Express.js (Web framework)
-- OpenAI SDK (AI integration)
+- Google Gemini AI (AI integration)
 - bcryptjs (Password hashing)
 - jsonwebtoken (JWT authentication)
+- multer (File upload handling)
 - CORS (Cross-origin support)
+- Role-based authentication
 
 ---
 
@@ -292,7 +316,23 @@ Backend Server Memory
 │   ├── email
 │   ├── name
 │   ├── password (hashed)
+│   ├── role (admin/user/recruiter)
 │   └── createdAt
+│
+├── jobs[]                      # Array of job postings
+│   ├── id
+│   ├── recruiterId
+│   ├── title, company, location
+│   ├── salary, type, description
+│   ├── requirements, contactEmail
+│   └── applicationDeadline
+│
+├── applications[]              # Array of job applications
+│   ├── id, userId, jobId
+│   ├── personalInfo (name, email, phone)
+│   ├── professionalInfo (experience, skills)
+│   ├── resumeFilePath
+│   └── appliedAt
 │
 └── sessions                    # JWT tokens (client-side)
 ```
@@ -306,8 +346,30 @@ MongoDB/PostgreSQL
 │   ├── email (unique)
 │   ├── name
 │   ├── password_hash
+│   ├── role (admin/user/recruiter)
 │   ├── created_at
 │   └── updated_at
+│
+├── jobs                        # Job postings
+│   ├── _id/id
+│   ├── recruiter_id (foreign key)
+│   ├── title, company, location
+│   ├── salary, type, description
+│   ├── requirements, contact_email
+│   ├── application_deadline
+│   ├── status (active/closed)
+│   └── created_at
+│
+├── applications                # Job applications
+│   ├── _id/id
+│   ├── user_id (foreign key)
+│   ├── job_id (foreign key)
+│   ├── personal_info
+│   ├── professional_info
+│   ├── resume_file_path
+│   ├── cover_letter
+│   ├── status (pending/reviewed/accepted/rejected)
+│   └── applied_at
 │
 ├── chat_sessions              # Chat history
 │   ├── _id/id
@@ -341,24 +403,45 @@ MongoDB/PostgreSQL
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
 | POST | `/api/auth/register` | Create new user account | No |
-| POST | `/api/auth/login` | User login | No |
+| POST | `/api/auth/login` | User login (multi-role) | No |
 | GET | `/api/user/profile` | Get user profile | Yes |
 
 ### AI Feature Endpoints
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
-| POST | `/api/chat` | Career Q&A chat | No* |
+| POST | `/api/chat` | Career Q&A chat | Yes |
 | POST | `/api/analyze-resume` | Resume analysis | No* |
 | POST | `/api/generate-roadmap` | Career roadmap | No* |
 
-*Currently no auth required, but recommended for production
+### Admin Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/api/admin/users` | Get all users | Admin |
+| DELETE | `/api/admin/users/:id` | Delete user | Admin |
+| PUT | `/api/admin/users/:id/role` | Change user role | Admin |
+
+### Job & Recruiter Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/api/jobs` | Get public job listings | No |
+| POST | `/api/jobs/apply` | Submit job application | Yes |
+| POST | `/api/recruiter/jobs` | Create job posting | Recruiter |
+| GET | `/api/recruiter/jobs` | Get recruiter's jobs | Recruiter |
+| PUT | `/api/recruiter/jobs/:id` | Update job posting | Recruiter |
+| DELETE | `/api/recruiter/jobs/:id` | Delete job posting | Recruiter |
+| GET | `/api/recruiter/applications` | Get job applications | Recruiter |
+| GET | `/api/recruiter/applications/:id/resume` | Download resume | Recruiter |
 
 ### Utility Endpoints
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
 | GET | `/health` | Health check | No |
+
+*Currently no auth required, but recommended for production
 
 ---
 

@@ -9,6 +9,8 @@ Secondary Gradient: Orange (#F97316) → Red (#EF4444)
 Accent Colors: Pink (#EC4899), Cyan (#06B6D4), Green (#10B981)
 Background: Dark gradients (Gray-900, Purple-900, Blue-900)
 Text: White with opacity variants (100%, 90%, 80%, 70%, 60%, 50%)
+Admin Theme: Purple gradients for admin-specific features
+Recruiter Theme: Indigo gradients for recruiter features
 ```
 
 ### Typography
@@ -22,67 +24,106 @@ Text: White with opacity variants (100%, 90%, 80%, 70%, 60%, 50%)
 - **Gaps**: 8px, 12px, 16px, 24px
 - **Rounded Corners**: 8px (lg), 12px (xl), 16px (2xl)
 
-## 🔐 Authentication System
+## 🔐 Multi-Role Authentication System
 
-### Login Page Features
-✅ **Email/Password Login**
-- Email validation
-- Password visibility toggle
-- Remember me checkbox
-- Error handling with user-friendly messages
+### Three-Tab Login Interface
+✅ **User Login Tab**
+- Blue theme with user icon
+- Standard email/password login
+- Remember me functionality
+- Designed for students and job seekers
 
-✅ **Registration**
-- Name, email, password fields
-- Password strength validation
-- Duplicate email detection
-- Automatic login after registration
+✅ **Admin Login Tab**
+- Purple theme with shield icon
+- Admin credential validation
+- Role verification before access
+- Special "Admin Access" helper text
 
-✅ **UI Elements**
-- Animated background blobs
-- Floating logo animation
-- Glassmorphism card design
-- Smooth tab switching (Login/Sign Up)
-- Gradient buttons with hover effects
+✅ **Recruiter Login Tab**
+- Indigo theme with briefcase icon
+- Recruiter-specific login
+- Access to job posting features
+- Professional interface design
 
-### Security
+### Enhanced Registration
+- Single registration form
+- Automatic role assignment based on email
+- Email validation and duplicate checking
+- Redirect to login after successful signup
+
+### Security Features
 - bcrypt password hashing (10 rounds)
-- JWT tokens (7-day expiration)
-- Protected API routes
-- Token validation middleware
+- JWT tokens with role information (24-hour expiration)
+- Role-based route protection
+- Secure session management
 
-## 📊 Dashboard
+### Default Accounts
+- **Admin**: admin@careermentra.com / admin123
+- **Recruiter**: recruiter@company.com / recruiter123
+- **Auto-creation**: Default accounts created on server startup
 
-### Layout
+## 📊 Role-Based Dashboard System
+
+### Student Dashboard
 ```
 ┌─────────────────────────────────────┐
 │  Welcome Message + User Name        │
 │  "Your AI Career Tools"             │
 ├─────────────────────────────────────┤
-│  [Stats: Conversations | Resumes |  │
-│         Career Paths]               │
+│  ┌──────┐  ┌──────┐  ┌──────┐     │
+│  │ Chat │  │Resume│  │Roadmap│     │
+│  │  AI  │  │  AI  │  │  AI   │     │
+│  └──────┘  └──────┘  └──────┘     │
+│  ┌──────┐                          │
+│  │ Jobs │                          │
+│  │Search│                          │
+│  └──────┘                          │
+└─────────────────────────────────────┘
+```
+
+### Admin Dashboard
+```
+┌─────────────────────────────────────┐
+│  Welcome Message + Admin Badge      │
+│  "Your AI Career Tools"             │
 ├─────────────────────────────────────┤
 │  ┌──────┐  ┌──────┐  ┌──────┐     │
 │  │ Chat │  │Resume│  │Roadmap│     │
 │  │  AI  │  │  AI  │  │  AI   │     │
 │  └──────┘  └──────┘  └──────┘     │
-├─────────────────────────────────────┤
-│  Bottom CTA: "Ready to Transform    │
-│  Your Career?"                      │
+│  ┌──────┐  ┌──────┐               │
+│  │ Jobs │  │Admin │               │
+│  │Search│  │Panel │               │
+│  └──────┘  └──────┘               │
 └─────────────────────────────────────┘
 ```
 
-### Tool Cards
+### Recruiter Dashboard
+```
+┌─────────────────────────────────────┐
+│  Welcome Message + Recruiter Badge  │
+│  "Your AI Career Tools"             │
+├─────────────────────────────────────┤
+│  ┌──────┐  ┌──────┐  ┌──────┐     │
+│  │ Chat │  │Resume│  │Roadmap│     │
+│  │  AI  │  │  AI  │  │  AI   │     │
+│  └──────┘  └──────┘  └──────┘     │
+│  ┌──────┐  ┌──────┐               │
+│  │ Jobs │  │Recruiter│             │
+│  │Search│  │Dashboard│             │
+│  └──────┘  └──────┘               │
+└─────────────────────────────────────┘
+```
+
+### Dynamic Tool Cards
 Each card includes:
+- **Role-specific styling**: Different themes for admin/recruiter tools
+- **Access badges**: "Admin Only" or "Recruiter" indicators
 - **Icon**: Gradient background with tool icon
 - **Title**: Bold, descriptive name
 - **Description**: Brief explanation
 - **Features**: 3 bullet points
 - **Hover Effect**: Scale up, gradient overlay, arrow animation
-
-### Responsive Behavior
-- **Desktop**: 3 columns
-- **Tablet**: 2 columns
-- **Mobile**: 1 column (stacked)
 
 ## 💬 AI Career Q&A Chat
 
@@ -388,3 +429,167 @@ border: 1px solid rgba(255, 255, 255, 0.2);
 ---
 
 **Career Mantra AI** - Thoughtfully designed for the best user experience! ✨
+
+## 👨‍💼 Admin Panel
+
+### User Management Interface
+```
+┌─────────────────────────────────────┐
+│  Admin Panel Header + Statistics    │
+│  Total Users | Admin Users | Regular│
+├─────────────────────────────────────┤
+│  User Management Table              │
+│  ┌─────┬─────┬─────┬─────┬─────┐   │
+│  │User │Email│Role │Date │Actions│   │
+│  ├─────┼─────┼─────┼─────┼─────┤   │
+│  │John │john │user │Nov  │Edit │   │
+│  │     │@ex  │     │2024 │Del  │   │
+│  └─────┴─────┴─────┴─────┴─────┘   │
+└─────────────────────────────────────┘
+```
+
+### Features
+- **User Statistics**: Total, admin, and regular user counts
+- **User Table**: Comprehensive user information display
+- **Role Management**: Promote/demote users between roles
+- **User Deletion**: Remove users with confirmation dialogs
+- **Search & Filter**: Find users quickly
+- **Responsive Design**: Works on all devices
+
+### Security
+- Admin-only access with role verification
+- Protected API endpoints
+- Confirmation dialogs for destructive actions
+- Audit logging for admin actions
+
+## 💼 Complete Job Management System
+
+### Job Listings Page
+```
+┌─────────────────────────────────────┐
+│  Job Search & Listings Header       │
+├─────────────────────────────────────┤
+│  Search & Filter Bar                │
+│  [Search] [Location] [Type] [Count] │
+├─────────────────────────────────────┤
+│  Job Cards                          │
+│  ┌─────────────────────────────┐   │
+│  │ Frontend Developer          │   │
+│  │ TechCorp Inc. | SF, CA      │   │
+│  │ $80k-120k | Full-time       │   │
+│  │ [Get AI Tips] [Apply Now]   │   │
+│  └─────────────────────────────┘   │
+└─────────────────────────────────────┘
+```
+
+### Job Application System
+```
+┌─────────────────────────────────────┐
+│  Apply for Position Modal           │
+├─────────────────────────────────────┤
+│  Personal Information               │
+│  [Name] [Email] [Phone] [Location]  │
+├─────────────────────────────────────┤
+│  Professional Information           │
+│  [Experience] [LinkedIn] [Portfolio]│
+├─────────────────────────────────────┤
+│  Resume Upload                      │
+│  [Drag & Drop Area]                 │
+├─────────────────────────────────────┤
+│  Cover Letter                       │
+│  [Text Area]                        │
+├─────────────────────────────────────┤
+│  [Submit Application] [Cancel]      │
+└─────────────────────────────────────┘
+```
+
+### Features
+- **Job Search**: Search by title, company, keywords
+- **Advanced Filtering**: Location, job type, salary range
+- **AI Integration**: Get application tips for each job
+- **Multiple Apply Options**: Form, LinkedIn, Indeed, Direct
+- **Resume Upload**: Drag & drop with file validation
+- **Professional Form**: Complete application with all details
+- **Save Jobs**: Bookmark functionality
+- **Responsive Design**: Mobile-optimized interface
+
+## 🏢 Recruiter Dashboard
+
+### Job Management Interface
+```
+┌─────────────────────────────────────┐
+│  Recruiter Dashboard                │
+│  [My Jobs] [Applications] Tabs      │
+├─────────────────────────────────────┤
+│  Job Postings                       │
+│  ┌─────────────────────────────┐   │
+│  │ Senior Developer            │   │
+│  │ TechCorp | Austin, TX       │   │
+│  │ Applications: 12            │   │
+│  │ [Edit] [Delete]             │   │
+│  └─────────────────────────────┘   │
+│  [+ Post New Job]                   │
+└─────────────────────────────────────┘
+```
+
+### Application Management
+```
+┌─────────────────────────────────────┐
+│  Job Applications                   │
+├─────────────────────────────────────┤
+│  Application Cards                  │
+│  ┌─────────────────────────────┐   │
+│  │ John Doe                    │   │
+│  │ Frontend Developer          │   │
+│  │ john@email.com | 5 years    │   │
+│  │ [Download Resume] [Contact] │   │
+│  └─────────────────────────────┘   │
+└─────────────────────────────────────┘
+```
+
+### Features
+- **Job Posting**: Create, edit, delete job listings
+- **Application Review**: View candidate details and resumes
+- **Resume Downloads**: Direct download of uploaded files
+- **Application Tracking**: Status management
+- **Contact Management**: Applicant communication
+- **Analytics**: Application metrics and statistics
+- **Professional Interface**: Clean, organized layout
+
+## 🔒 Enhanced Security Features
+
+### Role-Based Access Control
+- **Multi-role authentication**: Admin, Recruiter, User
+- **Protected routes**: Role-specific endpoint access
+- **JWT tokens**: Include role information
+- **Middleware validation**: Server-side role checking
+
+### File Upload Security
+- **File type validation**: PDF, DOC, DOCX only
+- **File size limits**: 5MB maximum
+- **Secure storage**: Local uploads directory
+- **Access control**: Only job posters can download resumes
+
+### Data Protection
+- **Input sanitization**: All form inputs validated
+- **SQL injection prevention**: Parameterized queries ready
+- **XSS protection**: Content sanitization
+- **CSRF protection**: Token-based validation
+
+## 📱 Enhanced Mobile Experience
+
+### Responsive Navigation
+- **Role-aware sidebar**: Different options per user type
+- **Mobile hamburger menu**: Touch-friendly navigation
+- **Adaptive layouts**: Optimized for each screen size
+- **Touch targets**: Minimum 44px for mobile usability
+
+### Mobile-Optimized Forms
+- **Job application form**: Mobile-friendly layout
+- **File upload**: Touch-optimized drag & drop
+- **Form validation**: Real-time feedback
+- **Keyboard optimization**: Appropriate input types
+
+---
+
+**Career Mantra AI** - Now with complete role-based functionality and professional job management! ✨

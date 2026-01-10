@@ -20,44 +20,39 @@
 
 ## 📖 Overview
 
-**Career Mantra AI** is a fully responsive, production-ready career coaching platform that combines beautiful design with powerful AI capabilities. Built with modern technologies and designed specifically for students, it provides personalized career guidance, resume analysis, and career roadmap generation.
+**Career Mantra AI** is a comprehensive career coaching platform that combines beautiful design with powerful AI capabilities. Built with modern technologies and designed for students, professionals, and recruiters, it provides personalized career guidance, resume analysis, job management, and career roadmap generation.
 
 ### ✨ What Makes It Special
 
 - 🎨 **Beautiful Dark Gradient UI** - Modern glassmorphism design
-- 🤖 **AI-Powered** - Uses OpenAI's GPT-4o-mini for intelligent responses
+- 🤖 **AI-Powered** - Uses Google Gemini 2.5 Flash for intelligent responses
 - 📱 **Fully Responsive** - Works perfectly on mobile, tablet, and desktop
 - ⚡ **Fast & Smooth** - Optimized performance with smooth animations
-- 🔐 **Secure** - JWT authentication with bcrypt password hashing
+- 🔐 **Secure** - JWT authentication with role-based access control
+- 👥 **Multi-Role System** - Students, Admins, and Recruiters
+- 💼 **Complete Job Platform** - Job posting, applications, and resume management
 - 🎯 **Student-Focused** - Designed specifically for career-seeking students
 
 ## ✨ Features
 
-### 🔐 Authentication System
-- **Login/Register** with beautiful dark gradient UI
-- JWT token-based authentication
-- Password hashing with bcrypt
-- "Remember Me" functionality
-- Secure session management
+### 🔐 Multi-Role Authentication System
+- **Three-Tab Login Interface**: User, Admin, and Recruiter login
+- **Role-Based Access Control**: Different features for different user types
+- **Secure Authentication**: JWT tokens with bcrypt password hashing
+- **Default Accounts**: Pre-configured admin and recruiter accounts
+- **Session Management**: Remember me functionality
 
-### 📊 Interactive Dashboard
-- Welcome screen with personalized greeting
-- **3 AI Tool Cards** with hover animations:
-  - AI Career Q&A Chat
-  - AI Resume Analyzer
-  - Career Roadmap Generator
-- Statistics display (conversations, resumes, career paths)
-- Fully responsive grid layout
+### 📊 Role-Based Dashboards
+- **Student Dashboard**: AI tools for career guidance
+- **Admin Panel**: Complete user management system
+- **Recruiter Dashboard**: Job posting and application management
+- **Dynamic Navigation**: Role-specific sidebar and features
 
 ### 💬 AI Career Q&A Chat
 - Real-time chat interface with AI mentor
 - **6 Quick Action Cards** for common queries:
-  - Resume Review
-  - Interview Prep
-  - Career Transition
-  - Skill Development
-  - Job Search Strategy
-  - Career Goals
+  - Resume Review, Interview Prep, Career Transition
+  - Skill Development, Job Search Strategy, Career Goals
 - Chat history with session management
 - Beautiful message bubbles with avatars
 - Smooth scrolling and animations
@@ -82,6 +77,19 @@
 - Visual timeline with numbered steps
 - Clean, organized presentation
 
+### 💼 Complete Job Management System
+- **Job Listings**: Search, filter, and browse opportunities
+- **Job Application Form**: Professional application with resume upload
+- **Recruiter Dashboard**: Post jobs, manage applications
+- **Resume Upload**: Drag & drop file upload with validation
+- **Application Tracking**: Status management and communication
+
+### 👨‍💼 Admin Panel
+- **User Management**: View, edit, and delete users
+- **Role Control**: Promote users to admin or recruiter
+- **System Analytics**: User statistics and metrics
+- **Access Control**: Admin-only features and endpoints
+
 ## 🛠️ Tech Stack
 
 ### Frontend
@@ -94,9 +102,10 @@
 ### Backend
 - **Node.js** - JavaScript runtime
 - **Express.js** - Web framework
-- **OpenAI API** - GPT-4o-mini for AI responses
+- **Google Gemini AI** - Gemini 2.5 Flash for AI responses
 - **JWT** - JSON Web Tokens for authentication
 - **bcryptjs** - Password hashing
+- **multer** - File upload handling
 - **CORS** - Cross-origin resource sharing
 
 ### Design Features
@@ -110,7 +119,7 @@
 
 ### Prerequisites
 - Node.js (v18 or higher)
-- OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
+- Google Gemini API key ([Get one here](https://makersuite.google.com/app/apikey))
 
 ### Installation
 
@@ -120,11 +129,11 @@ git clone https://github.com/yourusername/career-mantra-ai.git
 cd career-mantra-ai
 ```
 
-**2. Configure OpenAI API Key**
+**2. Configure Google Gemini API Key**
 
 Open `backend/.env` and add your API key:
 ```env
-OPENAI_API_KEY=sk-your-actual-api-key-here
+GEMINI_API_KEY=your-actual-gemini-api-key-here
 PORT=3001
 JWT_SECRET=career-mantra-ai-secret-key-2024
 ```
@@ -152,7 +161,13 @@ Navigate to http://localhost:5173 and start using Career Mantra AI! 🎉
 ### First Time Setup
 1. Click "Sign Up" to create an account
 2. Enter your name, email, and password
-3. Explore the dashboard and try all three AI tools!
+3. Login with your credentials (signup redirects to login)
+4. Explore the dashboard and try all AI tools!
+
+### Demo Accounts
+- **Admin**: `admin@careermentra.com` / `admin123`
+- **Recruiter**: `recruiter@company.com` / `recruiter123`
+- **Regular User**: Create your own account
 
 ## 📸 Screenshots
 
@@ -206,12 +221,25 @@ Fully responsive design that works perfectly on all devices.
 
 ### Authentication
 - `POST /api/auth/register` - Create new user account
-- `POST /api/auth/login` - User login
+- `POST /api/auth/login` - Multi-role user login
 
 ### AI Features
 - `POST /api/chat` - Career Q&A chat with AI
 - `POST /api/analyze-resume` - Resume analysis
 - `POST /api/generate-roadmap` - Career roadmap generation
+
+### Admin Panel
+- `GET /api/admin/users` - Get all users (admin only)
+- `DELETE /api/admin/users/:id` - Delete user (admin only)
+- `PUT /api/admin/users/:id/role` - Change user role (admin only)
+
+### Job System
+- `GET /api/jobs` - Get public job listings
+- `POST /api/jobs/apply` - Submit job application with resume
+- `POST /api/recruiter/jobs` - Create job posting (recruiter only)
+- `GET /api/recruiter/jobs` - Get recruiter's jobs
+- `GET /api/recruiter/applications` - Get job applications
+- `GET /api/recruiter/applications/:id/resume` - Download resume
 
 ### Utility
 - `GET /health` - Health check
@@ -222,13 +250,13 @@ Fully responsive design that works perfectly on all devices.
 Create a `.env` file in the `backend` directory:
 
 ```env
-OPENAI_API_KEY=your_openai_api_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
 PORT=3001
 JWT_SECRET=your-secret-key-change-in-production
 ```
 
 **Variables:**
-- `OPENAI_API_KEY` - Your OpenAI API key (required)
+- `GEMINI_API_KEY` - Your Google Gemini API key (required)
 - `PORT` - Backend server port (default: 3001)
 - `JWT_SECRET` - Secret key for JWT tokens (change in production)
 
@@ -252,10 +280,10 @@ Career Mantra AI works perfectly on all devices:
 
 ## 💰 Cost Information
 
-### OpenAI API Usage
-- **Model**: GPT-4o-mini (very affordable)
+### Google Gemini API Usage
+- **Model**: Gemini 2.5 Flash (fast and affordable)
 - **Cost**: ~$0.001 per conversation
-- **Monitoring**: Track usage at https://platform.openai.com/usage
+- **Monitoring**: Track usage at https://makersuite.google.com/app/apikey
 
 ### Hosting (Optional)
 - **Frontend**: Free (Vercel, Netlify)
@@ -265,9 +293,11 @@ Career Mantra AI works perfectly on all devices:
 ## 🔒 Security Features
 
 - ✅ Password hashing with bcrypt (10 rounds)
-- ✅ JWT token authentication (7-day expiration)
+- ✅ JWT token authentication (24-hour expiration)
+- ✅ Role-based access control (admin/user/recruiter)
 - ✅ Protected API routes with middleware
 - ✅ Input validation and sanitization
+- ✅ File upload security (type and size validation)
 - ✅ CORS configuration
 - ✅ Environment variable management
 - ✅ Secure password visibility toggle
@@ -275,19 +305,26 @@ Career Mantra AI works perfectly on all devices:
 ## 📚 Documentation
 
 - **[QUICK_START.md](QUICK_START.md)** - Fast 3-step setup guide
-- **[PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md)** - Complete feature overview
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Complete system architecture
 - **[FEATURES.md](FEATURES.md)** - Detailed feature documentation
-- **[DEMO_GUIDE.md](DEMO_GUIDE.md)** - Demo presentation guide
+- **[USER_GUIDE.md](USER_GUIDE.md)** - Complete user manual
 - **[DEPLOYMENT.md](DEPLOYMENT.md)** - Production deployment guide
-- **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** - Project completion summary
+- **[ROADMAP.md](ROADMAP.md)** - Future development plans
+- **[ADMIN_SETUP.md](ADMIN_SETUP.md)** - Admin panel configuration
+- **[RECRUITER_SYSTEM.md](RECRUITER_SYSTEM.md)** - Job system documentation
+- **[API_SETUP.md](API_SETUP.md)** - API configuration guide
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-**"OpenAI API key not configured"**
+**"Google Gemini API key not configured"**
 - Add your API key to `backend/.env`
 - Restart the backend server
+
+**"Invalid Gemini API key"**
+- Check your API key at https://makersuite.google.com/app/apikey
+- Ensure the key has proper permissions
 
 **"Failed to connect"**
 - Ensure backend is running on port 3001
@@ -317,7 +354,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
-- **OpenAI** for providing the GPT-4o-mini API
+- **Google AI** for providing the Gemini 2.5 Flash API
 - **React Team** for the amazing framework
 - **Tailwind CSS** for the utility-first CSS framework
 - **Lucide** for the beautiful icons
@@ -344,5 +381,6 @@ Give a ⭐️ if this project helped you!
 [Report Bug](https://github.com/yourusername/career-mantra-ai/issues) • [Request Feature](https://github.com/yourusername/career-mantra-ai/issues)
 
 </div>
-#   c a r e e r - m a n t r a - A I -  
+#   c a r e e r - m a n t r a - A I - 
+ 
  
